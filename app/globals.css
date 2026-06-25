@@ -1,0 +1,332 @@
+@import "tailwindcss";
+
+@theme {
+  /*
+   * Dark design-studio palette. Token names are kept from the template so
+   * component markup stays stable — only the VALUES define the theme:
+   *   paper      — near-black page background
+   *   parchment  — elevated / hover dark surface
+   *   card       — card surface, lifted from paper
+   *   ink        — PRIMARY light text + headings
+   *   moss       — muted / meta text (light gray)
+   *   pine       — indigo accent (links, buttons, tags, focus)
+   *   pine-deep  — indigo hover/active
+   *   marker     — light indigo accent
+   *   line       — subtle hairline border on dark
+   */
+  --color-paper: #0d0e12;
+  --color-parchment: #1a1c22;
+  --color-card: #15161c;
+  --color-ink: #e9e9ee;
+  --color-moss: #9b9caa;
+  --color-pine: #6d5efc;
+  --color-pine-deep: #5b4ee0;
+  --color-marker: #a99bff;
+  --color-line: #282a33;
+}
+
+@theme inline {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-sora), ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+
+  body {
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    background: var(--color-pine);
+    color: #ffffff;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-pine);
+    outline-offset: 2px;
+  }
+
+  /* Tailwind v4 preflight resets buttons to cursor: default — restore the
+     expected affordance for all interactive controls. */
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+}
+
+@layer components {
+  /* --- typography accents ------------------------------------------------ */
+
+  .tag-cap {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+    color: var(--color-pine);
+  }
+
+  .u-marker {
+    color: var(--color-pine);
+  }
+
+  .u-marker-hover {
+    background-image: linear-gradient(var(--color-pine), var(--color-pine));
+    background-repeat: no-repeat;
+    background-position: 0 100%;
+    background-size: 0% 2px;
+    transition: background-size 0.25s ease;
+  }
+
+  a:hover .u-marker-hover,
+  .group:hover .u-marker-hover {
+    background-size: 100% 2px;
+  }
+
+  .chapter-num {
+    font-weight: 700;
+    font-size: 1.25rem;
+    line-height: 1;
+    color: var(--color-pine);
+  }
+
+  /* --- rules & frames ------------------------------------------------------ */
+
+  .rule-double {
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .rule-dotted {
+    border-top: 1px solid var(--color-line);
+  }
+
+  .frame-offset {
+    border-radius: 12px;
+    box-shadow: 0 8px 28px -14px rgb(0 0 0 / 0.6);
+  }
+
+  /* card-lift: dark surface with a subtle indigo glow on hover — the
+     signature look of the studio theme. */
+  .card-lift {
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--color-card);
+    border: 1px solid var(--color-line);
+    transition:
+      box-shadow 0.2s ease,
+      border-color 0.2s ease,
+      transform 0.2s ease;
+  }
+
+  .card-lift:hover {
+    border-color: var(--color-pine);
+    box-shadow:
+      0 0 0 1px rgba(109, 94, 252, 0.45),
+      0 10px 34px -12px rgba(109, 94, 252, 0.4);
+    transform: translateY(-2px);
+  }
+
+  /* --- controls -------------------------------------------------------------- */
+
+  .btn-pine {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--color-pine);
+    color: #ffffff;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 0.6rem 1.25rem;
+    transition:
+      background-color 0.2s ease,
+      box-shadow 0.2s ease;
+  }
+
+  .btn-pine:hover {
+    background: var(--color-pine-deep);
+    box-shadow:
+      0 0 0 1px rgba(109, 94, 252, 0.45),
+      0 8px 24px -10px rgba(109, 94, 252, 0.55);
+  }
+
+  .field {
+    width: 100%;
+    background: #101218;
+    border: 1px solid var(--color-line);
+    border-radius: 10px;
+    padding: 0.65rem 1rem;
+    font-size: 0.9375rem;
+    color: var(--color-ink);
+    transition: border-color 0.2s ease;
+  }
+
+  .field::placeholder {
+    color: var(--color-moss);
+  }
+
+  .field:focus {
+    border-color: var(--color-pine);
+  }
+
+  .field:focus-visible {
+    outline: 2px solid var(--color-pine);
+    outline-offset: 1px;
+  }
+
+  /* --- article body (Strapi blocks) ------------------------------------------ */
+
+  .article-body {
+    font-size: 1.0625rem;
+    line-height: 1.75;
+    color: #c9cad4;
+  }
+
+  .article-body > * + * {
+    margin-top: 1.25rem;
+  }
+
+  .article-body h2,
+  .article-body h3,
+  .article-body h4 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+    margin-top: 2.25rem;
+    color: var(--color-ink);
+  }
+
+  .article-body h2 {
+    font-size: 1.625rem;
+    scroll-margin-top: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .article-body h3 {
+    font-size: 1.3125rem;
+  }
+
+  .article-body h4 {
+    font-size: 1.125rem;
+  }
+
+  .article-body a {
+    color: var(--color-pine);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .article-body a:hover {
+    color: var(--color-marker);
+  }
+
+  .article-body ul,
+  .article-body ol {
+    padding-left: 1.5rem;
+    list-style: disc;
+  }
+
+  .article-body ul > li,
+  .article-body ol > li {
+    margin-top: 0.5rem;
+  }
+
+  .article-body ul > li::marker,
+  .article-body ol > li::marker {
+    color: var(--color-pine);
+  }
+
+  .article-body ol {
+    list-style: decimal;
+  }
+
+  .article-body blockquote {
+    border-left: 4px solid var(--color-pine);
+    background: #14151c;
+    border-radius: 0 10px 10px 0;
+    padding: 1rem 1.5rem;
+    font-style: italic;
+    color: var(--color-ink);
+  }
+
+  .article-body code {
+    background: #0a0b0f;
+    border: 1px solid var(--color-line);
+    border-radius: 6px;
+    padding: 0.1em 0.35em;
+    font-size: 0.875em;
+  }
+
+  .article-body pre {
+    background: #0a0b0f;
+    color: #e9e9ee;
+    border: 1px solid var(--color-line);
+    border-radius: 12px;
+    padding: 1.25rem;
+    overflow-x: auto;
+  }
+
+  .article-body pre code {
+    background: transparent;
+    border: 0;
+    padding: 0;
+    color: inherit;
+  }
+
+  .article-body img {
+    border-radius: 12px;
+  }
+
+  /* --- entrance motion ---------------------------------------------------------- */
+
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .reveal {
+    animation: rise 0.5s ease-out both;
+  }
+
+  .reveal-2 {
+    animation-delay: 0.08s;
+  }
+
+  .reveal-3 {
+    animation-delay: 0.16s;
+  }
+
+  .reveal-4 {
+    animation-delay: 0.24s;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal,
+    .reveal-2,
+    .reveal-3,
+    .reveal-4 {
+      animation: none;
+    }
+  }
+}
