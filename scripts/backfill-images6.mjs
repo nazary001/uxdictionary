@@ -32,15 +32,28 @@ async function cc0(query) {
   const r = Array.isArray(b.results) ? b.results : [];
   return [...r.filter((x) => (x.width ?? 0) >= 1000), ...r.filter((x) => (x.width ?? 0) < 1000)];
 }
+// Accept only raster formats next/image can render (JPEG/PNG/WebP/GIF) — Openverse
+// sometimes returns SVG/XML which next/image blocks by default.
+function isRaster(buf) {
+  if (!buf || buf.length < 12) return false;
+  const ascii = buf.toString("latin1", 0, 12);
+  if (buf[0] === 0xff && buf[1] === 0xd8) return true; // JPEG
+  if (buf[0] === 0x89 && buf[1] === 0x50) return true; // PNG
+  if (ascii.startsWith("GIF8")) return true; // GIF
+  if (ascii.startsWith("RIFF") && ascii.slice(8, 12) === "WEBP") return true; // WebP
+  return false;
+}
+
 async function download(cands) {
   for (const c of cands.filter((x) => !used.has(x.url)).slice(0, 8)) {
     try {
       const res = await fetch(c.url, { headers: { "User-Agent": "Mozilla/5.0 (UxDictSeeder/1.0)" }, redirect: "follow", signal: AbortSignal.timeout(30000) });
       if (!res.ok) continue;
       const ct = res.headers.get("content-type") ?? "image/jpeg";
-      if (!ct.startsWith("image/")) continue;
+      if (!ct.startsWith("image/") || ct.includes("svg")) continue;
       const buf = Buffer.from(await res.arrayBuffer());
       if (buf.length < 30000) continue;
+      if (!isRaster(buf)) continue; // reject SVG/XML/text — next/image can't render SVG
       used.add(c.url); writeFileSync(USED, JSON.stringify([...used], null, 2));
       return { buf, ct: ct.split(";")[0] };
     } catch { /* next */ }

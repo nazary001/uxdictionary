@@ -11,6 +11,23 @@ const NAV_LINKS = [
   { href: "/glossary", label: "Glossary" },
 ];
 
+function Logo() {
+  return (
+    <Link
+      href="/"
+      className="group flex shrink-0 items-center gap-2.5"
+      aria-label={`${SITE_NAME} — home`}
+    >
+      <span className="grid h-8 w-8 place-items-center rounded-lg bg-pine font-display text-base font-bold text-white shadow-[0_0_16px_rgba(109,94,252,0.55)] transition-shadow group-hover:shadow-[0_0_22px_rgba(109,94,252,0.85)]">
+        U
+      </span>
+      <span className="font-display text-lg font-bold tracking-tight text-ink">
+        UX <span className="text-marker">Dictionary</span>
+      </span>
+    </Link>
+  );
+}
+
 function SearchForm({ autoFocus = false }: { autoFocus?: boolean }) {
   return (
     <form action="/search" role="search" className="flex w-full items-center gap-2">
@@ -19,7 +36,7 @@ function SearchForm({ autoFocus = false }: { autoFocus?: boolean }) {
         name="q"
         required
         autoFocus={autoFocus}
-        placeholder="Search..."
+        placeholder="Search the dictionary…"
         aria-label="Search articles"
         className="field"
       />
@@ -56,33 +73,10 @@ export default function Header() {
   }, []);
 
   return (
-    <header className="border-b border-line bg-paper text-white">
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4 sm:px-6">
-        <Link
-          href="/"
-          className="shrink-0 font-display text-2xl font-bold tracking-tight"
-          aria-label={`${SITE_NAME} — home`}
-        >
-          UX <span className="text-marker">Dictionary</span>
-        </Link>
-
-        <nav aria-label="Main" className="hidden items-center gap-6 lg:flex">
-          {NAV_LINKS.map((link) => {
-            const active =
-              pathname === link.href || pathname.startsWith(`${link.href}/`);
-            return (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={`text-[15px] font-medium transition-colors hover:text-marker ${
-                  active ? "text-marker" : "text-white/90"
-                }`}
-              >
-                {link.label}
-              </Link>
-            );
-          })}
-        </nav>
+    <header className="sticky top-0 z-50 border-b border-line bg-paper/85 text-white backdrop-blur-md supports-[backdrop-filter]:bg-paper/70">
+      {/* Masthead: logo + search / menu controls */}
+      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3.5 sm:px-6">
+        <Logo />
 
         <div className="flex items-center gap-2">
           <form
@@ -94,9 +88,9 @@ export default function Header() {
               type="search"
               name="q"
               required
-              placeholder="Search..."
+              placeholder="Search…"
               aria-label="Search articles"
-              className="field w-40 !py-1.5 text-sm lg:w-48"
+              className="field !py-1.5 w-40 text-sm lg:w-56"
             />
             <button type="submit" className="btn-pine !py-1.5 text-sm">
               Search
@@ -112,7 +106,7 @@ export default function Header() {
             aria-expanded={searchOpen}
             aria-controls="header-search-panel"
             aria-label={searchOpen ? "Close search" : "Open search"}
-            className="flex h-10 w-10 items-center justify-center rounded-md transition-colors hover:bg-white/10 md:hidden"
+            className="flex h-10 w-10 items-center justify-center rounded-lg text-moss transition-colors hover:bg-white/5 hover:text-ink md:hidden"
           >
             <svg
               width="19"
@@ -138,21 +132,55 @@ export default function Header() {
             aria-expanded={menuOpen}
             aria-controls="header-menu-panel"
             aria-label={menuOpen ? "Close menu" : "Open menu"}
-            className="flex h-10 w-10 flex-col items-center justify-center gap-[5px] rounded-md transition-colors hover:bg-white/10 lg:hidden"
+            className="flex h-10 w-10 flex-col items-center justify-center gap-[5px] rounded-lg transition-colors hover:bg-white/5 lg:hidden"
           >
             <span
-              className={`h-[2px] w-5 bg-white transition-transform ${menuOpen ? "translate-y-[7px] rotate-45" : ""}`}
+              className={`h-[2px] w-5 bg-ink transition-transform ${menuOpen ? "translate-y-[7px] rotate-45" : ""}`}
             />
-            <span className={`h-[2px] w-5 bg-white ${menuOpen ? "opacity-0" : ""}`} />
+            <span className={`h-[2px] w-5 bg-ink ${menuOpen ? "opacity-0" : ""}`} />
             <span
-              className={`h-[2px] w-5 bg-white transition-transform ${menuOpen ? "-translate-y-[7px] -rotate-45" : ""}`}
+              className={`h-[2px] w-5 bg-ink transition-transform ${menuOpen ? "-translate-y-[7px] -rotate-45" : ""}`}
             />
           </button>
         </div>
       </div>
 
+      {/* Category bar — its own row, mono labels with an indigo glow indicator. */}
+      <nav
+        aria-label="Sections"
+        className="hidden border-t border-line lg:block"
+      >
+        <ul className="mx-auto flex max-w-6xl items-stretch justify-between px-2 sm:px-4">
+          {NAV_LINKS.map((link) => {
+            const active =
+              pathname === link.href || pathname.startsWith(`${link.href}/`);
+            return (
+              <li key={link.href} className="flex-1">
+                <Link
+                  href={link.href}
+                  aria-current={active ? "page" : undefined}
+                  className={`relative block px-2 py-3 text-center font-mono text-[11px] uppercase tracking-[0.16em] transition-colors ${
+                    active ? "text-marker" : "text-moss hover:text-ink"
+                  }`}
+                >
+                  {link.label}
+                  <span
+                    aria-hidden="true"
+                    className={`absolute inset-x-3 bottom-0 h-[2px] rounded-full bg-pine transition-opacity ${
+                      active
+                        ? "opacity-100 shadow-[0_0_10px_rgba(109,94,252,0.8)]"
+                        : "opacity-0"
+                    }`}
+                  />
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+      </nav>
+
       {searchOpen && (
-        <div id="header-search-panel" className="border-t border-white/10">
+        <div id="header-search-panel" className="border-t border-line">
           <div className="mx-auto max-w-6xl px-4 py-4 sm:px-6">
             <SearchForm autoFocus />
           </div>
@@ -163,19 +191,26 @@ export default function Header() {
         <nav
           id="header-menu-panel"
           aria-label="Mobile"
-          className="border-t border-white/10 lg:hidden"
+          className="border-t border-line lg:hidden"
         >
           <ul className="mx-auto max-w-6xl px-4 py-2 sm:px-6">
-            {NAV_LINKS.map((link) => (
-              <li key={link.href} className="border-b border-white/10 last:border-b-0">
-                <Link
-                  href={link.href}
-                  className="block py-3 text-[15px] font-medium text-white/90 hover:text-marker"
-                >
-                  {link.label}
-                </Link>
-              </li>
-            ))}
+            {NAV_LINKS.map((link) => {
+              const active =
+                pathname === link.href || pathname.startsWith(`${link.href}/`);
+              return (
+                <li key={link.href} className="border-b border-line last:border-b-0">
+                  <Link
+                    href={link.href}
+                    aria-current={active ? "page" : undefined}
+                    className={`block py-3 font-mono text-[12px] uppercase tracking-[0.14em] transition-colors ${
+                      active ? "text-marker" : "text-moss hover:text-ink"
+                    }`}
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
         </nav>
       )}
