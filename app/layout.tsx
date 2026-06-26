@@ -52,9 +52,11 @@ export const metadata: Metadata = {
     },
   },
   verification: {
-    ...(process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION
-      ? { google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION }
-      : {}),
+    // Search Console HTML-tag token. Env var wins if set (e.g. in Vercel);
+    // otherwise the baked-in token ships so verification works in production.
+    google:
+      process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION ??
+      "miIwfYGs1gSafYQwulXU3nvm3gzs7wp_j7mZQc6WeuU",
     ...(process.env.NEXT_PUBLIC_YANDEX_VERIFICATION
       ? { yandex: process.env.NEXT_PUBLIC_YANDEX_VERIFICATION }
       : {}),

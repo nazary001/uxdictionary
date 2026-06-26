@@ -38,13 +38,15 @@ manual steps that can only be done inside your Google accounts and Vercel.
 
 1. Open https://search.google.com/search-console and **Add property**.
    - Easiest: **URL-prefix** property `https://uxdictionary.io`.
-2. **Verify ownership** — pick ONE:
-   - **Google Analytics (recommended, zero code):** GA4 `G-N27FWJMYM9` is already
-     live on the site. If you verify with the same Google account that owns that
-     GA property, GSC verifies instantly — nothing to paste.
-   - **HTML tag:** copy the `content="…"` value Google shows, set it as
-     `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` in Vercel (see §4), redeploy.
-   - **DNS:** add the TXT record Google gives you at your registrar / Vercel DNS.
+2. **Verify ownership** — the **HTML tag is already wired**: the token
+   `miIwfYGs1gSafYQwulXU3nvm3gzs7wp_j7mZQc6WeuU` is baked into `app/layout.tsx`
+   and renders site-wide as
+   `<meta name="google-site-verification" content="…">`. After the next deploy,
+   just click **Verify** in Search Console (HTML-tag method). No env var needed.
+   - To rotate it, set `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` in Vercel (env
+     wins over the baked-in value), or replace the literal in `app/layout.tsx`.
+   - Alternatives: the **Google Analytics** method (GA4 `G-N27FWJMYM9` is live)
+     or a **DNS** TXT record.
 3. **Submit the sitemap:** Sitemaps → add `sitemap.xml` → Submit.
 4. **Request indexing** for the homepage, the glossary and a few top terms.
 5. Validate rich results: https://search.google.com/test/rich-results — paste a
