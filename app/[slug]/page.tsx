@@ -42,17 +42,32 @@ export default async function TermPage({ params }: Props) {
   const t = getTerm(slug);
   if (!t) notFound();
 
+  const termUrl = `${SITE_URL}/${t.slug}`;
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "DefinedTerm",
+    "@id": `${termUrl}#term`,
     name: t.term,
     description: t.description,
+    inLanguage: "en",
     inDefinedTermSet: {
       "@type": "DefinedTermSet",
-      name: "UX Dictionary",
-      url: SITE_URL,
+      "@id": `${SITE_URL}/glossary#termset`,
+      name: "UX Dictionary glossary",
+      url: `${SITE_URL}/glossary`,
     },
-    url: `${SITE_URL}/${t.slug}`,
+    url: termUrl,
+  };
+
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+      { "@type": "ListItem", position: 2, name: "Glossary", item: `${SITE_URL}/glossary` },
+      { "@type": "ListItem", position: 3, name: t.term, item: termUrl },
+    ],
   };
 
   return (
@@ -60,6 +75,10 @@ export default async function TermPage({ params }: Props) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
 
       <nav aria-label="Breadcrumb" className="text-xs text-moss">

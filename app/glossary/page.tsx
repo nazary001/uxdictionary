@@ -36,8 +36,42 @@ export default function GlossaryPage() {
   const groups = groupByLetter(terms);
   const letters = groups.map((g) => g.letter);
 
+  const termSetLd = {
+    "@context": "https://schema.org",
+    "@type": "DefinedTermSet",
+    "@id": `${SITE_URL}/glossary#termset`,
+    name: "UX Dictionary glossary",
+    description:
+      "A living glossary of UX, UI, research and design-systems terms.",
+    url: `${SITE_URL}/glossary`,
+    inLanguage: "en",
+    hasDefinedTerm: terms.map((t) => ({
+      "@type": "DefinedTerm",
+      "@id": `${SITE_URL}/${t.slug}#term`,
+      name: t.term,
+      url: `${SITE_URL}/${t.slug}`,
+    })),
+  };
+
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+      { "@type": "ListItem", position: 2, name: "Glossary", item: `${SITE_URL}/glossary` },
+    ],
+  };
+
   return (
     <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6 sm:py-14">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(termSetLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
+      />
       <header className="reveal max-w-2xl">
         <p className="tag-cap">Glossary</p>
         <h1 className="mt-3 font-display text-4xl font-bold leading-tight tracking-tight sm:text-5xl">
